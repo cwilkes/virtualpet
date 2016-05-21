@@ -1,0 +1,1 @@
+alias mkzip='cd dist/ ; cp ../*.py . ; fn=~/Desktop/vp.zip ; rm $fn ; zip -r $fn . ; cd ..'
