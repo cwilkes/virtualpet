@@ -19,11 +19,29 @@ public class SpeechManager : MonoBehaviour
 
         keywords.Add("Drop Sphere", () =>
         {
+            Debug.Log("Speech drop sphere");
             var focusObject = GazeGestureManager.Instance.FocusedObject;
             if (focusObject != null)
             {
                 // Call the OnDrop method on just the focused object.
                 focusObject.SendMessage("OnDrop");
+            }
+        });
+
+        keywords.Add("Pet action", () =>
+        {
+            Debug.Log("Speech pet action");
+            var focusObject = GazeGestureManager.Instance.FocusedObject;
+            if (focusObject == null)
+            {
+                Debug.Log("No focus object");
+            }
+            else
+            {
+                string sphereName = focusObject.tag;
+                var data = new string[3] { "defaultUser", sphereName, "feed" };
+                Debug.Log("Sending data " + string.Join(",", data));
+                focusObject.SendMessage("OnPetAction", data);
             }
         });
 

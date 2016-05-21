@@ -1,7 +1,14 @@
 ﻿using UnityEngine;
+using System.Text;
+using System.Net;
+// using System.Net.Http;
+using UnityEngine;
+using System.Collections;
 
 public class SphereCommands : MonoBehaviour
 {
+    string restEndPoint = "https://vpzkkgaonf.execute-api.us-east-1.amazonaws.com/prod/events";
+   
     Vector3 originalPosition;
 
     // Use this for initialization
@@ -34,6 +41,37 @@ public class SphereCommands : MonoBehaviour
 
         // Put the sphere back into its original local position.
         this.transform.localPosition = originalPosition;
+    }
+
+    // called when user says "Pet Action"
+    void OnPetAction(string[] userPetAction)
+    {
+        Debug.Log("OnPetAction");
+        StartCoroutine(UploadPetAction(userPetAction[0], userPetAction[1], userPetAction[2]));
+          // HttpClient client = new HttpClient();
+          //  WebClient client = new WebClient();
+          //string jsonText = @"{""user"":""chris"", ""pet"":""pet1"", ""action"":""feed""}";
+          //client.UploadData(restEndPoint, "POST", Encoding.UTF8.GetBytes(jsonText));
+    }
+
+    IEnumerator UploadPetAction(string userName, string petName, string action)
+    {
+        Debug.Log("UploadPetAction START");
+        WWWForm form = new WWWForm();
+        form.AddField("user", userName);
+        form.AddField("pet", petName);
+        form.AddField("action", action);
+        WWW w = new WWW(restEndPoint, form);
+        yield return w;
+        if (!string.IsNullOrEmpty(w.error))
+        {
+            Debug.Log("UploadPetAction ERROR: " + w.error);
+        }
+        else
+        {
+            Debug.Log("UploadPetAction GOOD");
+        }
+        Debug.Log("UploadPetAction DONE");
     }
 
     // Called by SpeechManager when the user says the "Drop sphere" command
