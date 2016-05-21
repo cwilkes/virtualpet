@@ -3,6 +3,7 @@ from collections import defaultdict
 from boto3.dynamodb.conditions import Key, Attr
 import datetime
 import models
+import json
 
 
 SNS_TOPIC_ADD_EVENT = 'arn:aws:sns:us-east-1:052602034920:vp_added_animal_event'
@@ -47,8 +48,13 @@ def add_event(user_id, pet_id, action):
     tbl_animal_events.put_item(Item=item)
     # this should be done in a trigger on the table but can't figure it out
     events = get_events_for_user_and_pet(user_id, pet_id)
-    # sigh, convert to a JSON format for serialization
-    sns_animal_events.publish(Message=models.events_to_json_str(events))
+    ret = dict(user=user_id, pet=pet_id, events=models.events_to_json(events))
+    sns_message(json.dumps(ret))
+    return ret
+
+
+def sns_message(msg):
+    sns_animal_events.publish(Message=msg)
 
 
 def get_events_for_user_and_pet(user_id, pet_id):

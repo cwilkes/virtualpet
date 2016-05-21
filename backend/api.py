@@ -12,10 +12,9 @@ def record_event_json_post(event, context):
     logger.info('Event1: %s' % (event, ))
     logger.info('Context1: %s' % (context, ))
     user_id, pet_id, action = event['user'], event['pet'], event['action']
-    db.add_event(user_id, pet_id, action)
-    ret = models.events_to_json(db.get_events_for_user_and_pet(user_id, pet_id))
+    ret = db.add_event(user_id, pet_id, action)
     logger.info('Ret for record_event: %s' % (ret, ))
-    return dict(user=user_id, pet_id=pet_id, actions=ret)
+    return ret
 
 
 def _form_post_to_single_dict(post_string):
@@ -29,3 +28,4 @@ def record_event(event, context):
     logger.info('Event2: %s' % (event, ))
     logger.info('Context2: %s' % (context, ))
     return record_event_json_post(_form_post_to_single_dict(event['body']), dict())
+
